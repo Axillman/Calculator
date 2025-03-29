@@ -4,8 +4,6 @@ const btns = document.querySelectorAll(".btn");
 const historyDiv = document.querySelector(".history");
 const calc = document.querySelector(".calculator");
 
-const test = [];
-
 const displayArr = JSON.parse(localStorage.getItem("display")) || [];
 let currentCalc = {};
 let justSolved = false;
@@ -66,6 +64,9 @@ btns.forEach(btn => {
     btn.addEventListener("click", () => {
         if (btn.innerText === "=") {
             try {
+                if (justSolved) {
+                    btn.disabled = true;
+                }
                 display.innerText += "\n" + eval(display.innerText);
                 const lines = display.innerText.split("\n");
 
@@ -73,12 +74,13 @@ btns.forEach(btn => {
                     expression: lines[0],
                     answer: lines[1]
                 };
-                    displayArr.unshift(calcObj)
+                displayArr.unshift(calcObj);
 
                 localStorage.setItem("display", JSON.stringify(displayArr));
                 justSolved = true;
             } catch (Error) {
                 display.innerText = "Error";
+                justSolved = true;
             }
             return;
         }
@@ -98,6 +100,7 @@ btns.forEach(btn => {
         }
 
         if (justSolved) {
+            btn.disabled = false;
             display.innerText = "";
             justSolved = false;
         }
